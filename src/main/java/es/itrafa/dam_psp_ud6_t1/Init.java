@@ -17,5 +17,9 @@ public class Init {
         LogCustom.setup();
         
         LOGGER.info("Inicio ejecución dam_psp_ud5_t1");
+        CheckData t = new CheckData();
+        t.signUp("paquito", "abc1234");
+        
+        t.signIn();
     }
 }

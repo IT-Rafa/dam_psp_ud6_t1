@@ -1,0 +1,10 @@
+ 
+ Actividad 6:
+ Crea una aplicación para la validación de datos en un registro. 
+ * Para que usuario pueda acceder a la aplicación debe introducir una contraseña 
+ * que debe cumplir unos mínimos (a vuestra elección). 
+ * Una vez acceda el usuario tendrá las siguientes opciones:
+ 
+ 
+ 
+ Pedir contraseña, validarla y mostrar menú
