@@ -1,10 +1,17 @@
- 
- Actividad 6:
- Crea una aplicación para la validación de datos en un registro. 
- * Para que usuario pueda acceder a la aplicación debe introducir una contraseña 
- * que debe cumplir unos mínimos (a vuestra elección). 
- * Una vez acceda el usuario tendrá las siguientes opciones:
- 
- 
- 
- Pedir contraseña, validarla y mostrar menú
+ENUNCIADOActividad 6: - Crea una aplicación para la validación de datos en un registro- Para que usuario pueda acceder a la aplicación debe introducir
+- una contraseña que debe cumplir unos mínimos (a vuestra elección).Una vez acceda el usuario tendrá las siguientes opciones:
+	• Solicita la matrícula de coche al usuario.		El programa debe soportar al menos 3 tipos de matrículas (más información).		Y debe contestar al	usuario si es correcta o no.
+	• Solicita al usuario el nombre de un fichero que quiere mostrar.		El nombre del fichero es como máximo de 8 caracteres y tiene una extensión de 3 caracteres.		Visualiza en pantalla el contenido del fichero.
+	• Solicita una cadena String a validar y que el usuario introduzca el patrón (expresión regular)		deseado a utilizar en la validación.
+	• Solicita un usuario de twiter y valídalo		empieza por @ y puede contener letras mayusculas y minusculas, numeros, guiones y guiones bajos.
+Es importante tener en cuenta que se tiene que llevar un registro de la actividad del programa en un fichero log (contenido libre).-------------------USUARIO ENTRA	- SI ES ADMIN PUEDE CREAR OTROS USUARIOS, SI NO NOModelo Vista ControladorVista.	- Pedir usuario y contraseña		- Comprobar patrones		- Mostrar Resultado si ok, y/o repetir (5 intentos)	- Mostrar Menú, pedir opción:
+		- 1 Comprobar matrícula		- 2 Mostrar archivo		- 3 Comprobar si patrón coincide con texto		- 4 Comprobar usuario Twiter		- 0 SALIR (FIN PROGRAMA)	- Pedir matricula
+		- Comprobar patrones matrícula
+		- Mostrar Resultado valida o no válida, repetir	- Pedir nombre(con ruta) del fichero.
+		- Comprobar patron fichero
+		- Mostrar Resultado si ok, o repetir
+	- Pedir cadena a validar y expresión regular
+		- Comprobar patron expresión regular		- Si patrón no válido: Pedir de nuevo/anular
+		- Si patrón válido: 1Mostrar Resultado si ok, y/o repetir	- Pedir usuario twiter
+		- Comprobar patrones twiter
+		- Mostrar Resultado valida o no válida, repetirSI USUARIO CANCELA PETICIÓN VUELVE AL MENÚClases:	- DataValidation: Historia: Acceso al programa- Inicio programa(Administrador)	- Se crea administrador con contraseña de forma interna. setup()	- Administrador crea uno o varios usuarios addUser(nombreAdmin, contraseñaAdmin, nuevoUsuario, contraNuevoUsuario)		- Comprueba patrón y que el usuario no exista. Si existe, confirmar cambio de clave.			- Patrón Usuario				- No espacios  (letras utf-8)			- Patrón Contraseña:				- Mínimo 6 caracteres (letras inglés)				- Mínimo 1 letra minúscula				- Mínimo 1 letra mayúscula				- Mínimo 1 número				- NO puede contener nombre usuario, ni siquiera alternando minúsculas y mayúsculas (si usuario="paco", "12Paco" no vale				- NO pueden ser mas de 3 números consecutivos, ni de forma inversa (123, 321)				- NO pueden ser mas de 3 letras minúsculas consecutivos, ni de forma inversa (abc, cba)				- NO pueden ser mas de 3 letras mayúsculas consecutivos, ni de forma inversa (ABC, CBA)		- Si patrón es válido, crea usuario		- si no muestra mensaje causa y devuelve false			- Datos adminstrador no válidos (sin precisar mas)			- patrón usuario no válido			- Patron contraseña no válido			- No se confirma el cambio de clave (usuario sigue existiendo con clave anterior) 		(Usuario standar)	- Se pide usuario:	- Se pide contraseña:	- Se comprueban ambas.		- Si usuario o contraseña inválidos			- Mensaje error y repite petición usuario		- sino Muestra menú

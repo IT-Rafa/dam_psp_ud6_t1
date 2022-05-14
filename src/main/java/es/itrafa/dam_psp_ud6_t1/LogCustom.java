@@ -11,10 +11,20 @@ import java.util.logging.SimpleFormatter;
  * @author it-ra
  */
 public class LogCustom {
-
+    //ATTRIBUTES
+    static private final String PATHLOGFILE = "LOGFILE.log";
+    static private final Logger logger;
     static private FileHandler fileTxt;
     static private SimpleFormatter formatterTxt;
 
+    // init static var logger
+    static {
+        logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    }
+
+    /**
+     * Configure log
+     */
     static public void setup() {
 
         try {
@@ -25,25 +35,27 @@ public class LogCustom {
             // 5$ = the log message
             // 6$ = thrown Associated with the log and its backtrace.
             System.setProperty("java.util.logging.SimpleFormatter.format",
-                    "[%4$-11s] [%1$tF %1$tT] %2$s%n -- %5$s %n");
+                    "[%4$-11s] [%1$tF %1$tT] %2$s%n\t%5$s %n");
 
-            // get the global logger to configure it
-            Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-
+            // set loggers to show upon level
             logger.setLevel(Level.INFO);
-            fileTxt = new FileHandler("Logging.txt", true);
+            
+            // Create output log to file (add parameter true to append logs)
+            fileTxt = new FileHandler(PATHLOGFILE);
 
-            // create a TXT formatter
+            // create format (use default; changed with SystemProperty
             formatterTxt = new SimpleFormatter();
+            // assign format to new file output
             fileTxt.setFormatter(formatterTxt);
+            
+            // Add output log to actives
             logger.addHandler(fileTxt);
 
-        } catch (IOException ex) {
+        } catch (IOException | SecurityException ex) {
             Logger.getLogger(LogCustom.class.getName()).log(Level.SEVERE, null, ex);
 
-        } catch (SecurityException ex) {
-            Logger.getLogger(LogCustom.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
+
 }
