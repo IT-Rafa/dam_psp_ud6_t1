@@ -1,0 +1,6 @@
+may 14, 2022 5:18:01 P. M. es.itrafa.dam_psp_ud6_t1.Init main
+GRAVE: severe Log
+may 14, 2022 5:18:01 P. M. es.itrafa.dam_psp_ud6_t1.Init main
+ADVERTENCIA: warning Log
+may 14, 2022 5:18:01 P. M. es.itrafa.dam_psp_ud6_t1.Init main
+INFORMACIÓN: info Log
