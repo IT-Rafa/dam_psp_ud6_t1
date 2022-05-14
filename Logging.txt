@@ -1,6 +1,17 @@
-may 14, 2022 5:18:01 P. M. es.itrafa.dam_psp_ud6_t1.Init main
-GRAVE: severe Log
-may 14, 2022 5:18:01 P. M. es.itrafa.dam_psp_ud6_t1.Init main
-ADVERTENCIA: warning Log
-may 14, 2022 5:18:01 P. M. es.itrafa.dam_psp_ud6_t1.Init main
-INFORMACIÓN: info Log
+may 14, 2022 6:01:52 P. M. es.itrafa.dam_psp_ud6_t1.Init main
+INFORMACIÓN: 
+Init tarea dam_psp_ud5_t1
+[INFORMACIÓN] [2022-05-14 18:02:16] 
+Init tarea dam_psp_ud5_t1 
+[INFORMACIÓN] [2022-05-14 18:02:43] Init tarea dam_psp_ud5_t1 
+[INFORMACIÓN] [2022-05-14 18:03:07] Inicio ejecución dam_psp_ud5_t1 
+[INFORMACIÓN] [2022-05-14 18:04:03] es.itrafa.dam_psp_ud6_t1.Init main
+INFORMACIÓN: Inicio ejecución dam_psp_ud5_t1 
+[INFORMACIÓN] [2022-05-14 18:04:36] es.itrafa.dam_psp_ud6_t1.Init main
+INFORMACIÓN
+ -- Inicio ejecución dam_psp_ud5_t1 
+[INFORMACIÓN] [2022-05-14 18:05:06] es.itrafa.dam_psp_ud6_t1.Init main
+
+ -- Inicio ejecución dam_psp_ud5_t1 
+[INFORMACIÓN] [2022-05-14 18:05:18] es.itrafa.dam_psp_ud6_t1.Init main
+ -- Inicio ejecución dam_psp_ud5_t1 

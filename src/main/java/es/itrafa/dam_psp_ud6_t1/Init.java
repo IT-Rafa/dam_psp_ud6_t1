@@ -14,13 +14,8 @@ public class Init {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-            LogCustom.setup();
-
-        LOGGER.setLevel(Level.INFO);
+        LogCustom.setup();
         
-        LOGGER.severe("severe Log");
-        LOGGER.warning("warning Log");
-        LOGGER.info("info Log");
-        LOGGER.finest("finest Log");
+        LOGGER.info("Inicio ejecución dam_psp_ud5_t1");
     }
 }
