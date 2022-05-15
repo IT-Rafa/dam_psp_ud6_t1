@@ -1,4 +1,4 @@
-package es.itrafa.dam_psp_ud6_t1.admin;
+package es.itrafa.dam_psp_ud6_t1;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
