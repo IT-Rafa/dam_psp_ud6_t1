@@ -12,7 +12,7 @@ public class User implements Comparable<User>{
     // ATTRIBUTES
     private String name;
     private String password;
-    private User type;
+    private UserType type;
 
     //GETTER/SETTER
     /**
@@ -44,14 +44,16 @@ public class User implements Comparable<User>{
     }
 
     /**
-     * @return the type
+     * @return the type of user
      */
-    public User getType() {
+    public UserType getType() {
         return type;
     }
 
     // CONSTRUCTOR
     User(String name, String password) {
+        this.name = name;
+        this.password = password;
         Pattern pat = null;
         Matcher mat = null;
 

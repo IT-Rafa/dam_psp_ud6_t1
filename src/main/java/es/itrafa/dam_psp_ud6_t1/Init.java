@@ -18,8 +18,11 @@ public class Init {
         
         LOGGER.info("Inicio ejecución dam_psp_ud5_t1");
 
+        // Se crea entorno con administrador
         DataValidation dv = new DataValidation();
-        dv.addUser("admin", "t0d0P0DER0S0","paco", "1234");
+        
+        // administrador crea nuevo usuario estandar
+        dv.userAccess();
 
     }
 }
