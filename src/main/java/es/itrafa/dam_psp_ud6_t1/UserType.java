@@ -1,13 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Enum.java to edit this template
- */
 package es.itrafa.dam_psp_ud6_t1;
 
 /**
- *
+ * Tipos de usuarios válidos
+ * 
  * @author it-ra
  */
 public enum UserType {
-    ADMIN, STANDAR
+    /**
+     * Usuarios administradores con derecho a modificar usuarios
+     */ADMIN,
+     /**
+      * Usuarios estándar con derecho a las opciones normales (enunciado)
+      */
+     STANDAR
 }

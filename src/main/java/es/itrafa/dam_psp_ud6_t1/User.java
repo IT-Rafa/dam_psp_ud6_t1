@@ -1,8 +1,5 @@
 package es.itrafa.dam_psp_ud6_t1;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  *
  * @author it-ra
@@ -10,8 +7,18 @@ import java.util.regex.Pattern;
 public class User implements Comparable<User>{
 
     // ATTRIBUTES
+    /**
+     * Nombre usuario
+     */
     private String name;
+        /**
+     * Contraseña usuario
+     */
     private String password;
+    /**
+     * Tipo de usuario
+     * @see UserType
+     */
     private UserType type;
 
     //GETTER/SETTER
@@ -49,19 +56,31 @@ public class User implements Comparable<User>{
     public UserType getType() {
         return type;
     }
-
+    // METHODS
     // CONSTRUCTOR
-    User(String name, String password) {
+    /**
+     * Crea un usuario (No válido hasta ser añadido a lista)
+     * <p>Controla que la contraseña sea válida(PENDIENTE)</p>
+     * 
+     * @see DataValidation
+     * @see UserType
+     * 
+     * @param name Nombre usuario
+     * @param password Contraseña usuario
+     * @param type Tipo usuario 
+     */
+    User(String name, String password, UserType type) {
         this.name = name;
         this.password = password;
-        Pattern pat = null;
-        Matcher mat = null;
+        this.type = type;
 
-        pat = Pattern.compile("[0-9]{8}-[a-zA-Z]");
-        mat = pat.matcher(name);
-        
     }
-
+    /**
+     * Si dos usuarios tienen mismo nombre, se consideran iguales
+     * @param o Usuario a comparar
+     * 
+     * @return 0 si son iguales. Valor negativo si o es menor, y positivo si o es mayor (creo)
+     */
     @Override
     public int compareTo(User o) {
         return name.compareTo(o.getName());

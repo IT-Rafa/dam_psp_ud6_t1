@@ -7,14 +7,27 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 /**
- *
+ * Controla los log usados por la aplicación.
+ * 
  * @author it-ra
  */
 public class LogCustom {
     //ATTRIBUTES
+    /**
+     * Ruta del archivo con los log
+     */
     static private final String PATHLOGFILE = "LOGFILE.log";
+    /**
+     * Representa el log a formatear usado por el programa
+     */
     static private final Logger logger;
+    /**
+     * Controla la salida hacia el archivo
+     */
     static private FileHandler fileTxt;
+    /**
+     * Define el formato
+     */
     static private SimpleFormatter formatterTxt;
 
     // init static var logger
@@ -23,11 +36,12 @@ public class LogCustom {
     }
 
     /**
-     * Configure log
+     * Configura formato y forma de salida de los log, incluido el archivo.
      */
     static public void setup() {
 
         try {
+            // Definimos formato global de salida
             // 1$ = Date. A ZoneDateTime object
             // 2$ = source. String with caller or logger's name
             // 3$ = logger's name
@@ -37,22 +51,22 @@ public class LogCustom {
             System.setProperty("java.util.logging.SimpleFormatter.format",
                     "[%4$-11s] [%1$tF %1$tT] %2$s:%n  MSG: %5$s%n");
 
-            // set loggers to show upon level
+            // Indicamos precisión de los log
             logger.setLevel(Level.INFO);
             
-            // Create output log to file (add parameter true to append logs)
+            // Creamos manejador para salida por fichero
             fileTxt = new FileHandler(PATHLOGFILE);
 
-            // create format (use default; changed with SystemProperty
+            // Preparamos formato (usando el formato ya creado)
             formatterTxt = new SimpleFormatter();
             
-            // assign format to new file output
+            // Indicamos el manejador para salida por fichero use el formato indicado
             fileTxt.setFormatter(formatterTxt);
             
-            // Add output log to actives
+            // Añadimos el manejador de salida a fichero al los activos
             logger.addHandler(fileTxt);
             
-            // Remove console hangler - no log in console
+            // Eliminamos los manejadores heredados (En principio, consola)
             logger.setUseParentHandlers(false);
 
 
