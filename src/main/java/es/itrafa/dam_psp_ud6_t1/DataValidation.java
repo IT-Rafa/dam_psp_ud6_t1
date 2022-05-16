@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Pide usuario y contraseña y controla el acceso a las opciones de los menús.
@@ -21,6 +23,7 @@ public class DataValidation {
     // ATTRIBUTES
     /**
      * Log usado para toda la aplicación
+     *
      * @see LogCustom
      */
     private final static Logger LOG = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -32,7 +35,8 @@ public class DataValidation {
     // METHODS
     // CONSTRUCTOR
     /**
-     * Constructor. Prepara lista usuarios y añade usuario admin para poder acceder la primera vez
+     * Constructor. Prepara lista usuarios y añade usuario admin para poder
+     * acceder la primera vez
      */
     public DataValidation() {
         this.userList = new ArrayList<>();
@@ -129,6 +133,7 @@ public class DataValidation {
         }
 
     }
+
     /**
      * Muestra y gestiona las opciones del menú del usuario estándar
      *
@@ -143,7 +148,53 @@ public class DataValidation {
         System.out.print(" 4. Validar usuario Twiter");
         System.out.print(" 5. Cambiar tu contraseña");
         System.out.print(" 0. SALIR");
-        String op = readLine("%n%s", "Introduce opción válida:");
+
+        String opSt = readLine("%n%s", "Introduce opción válida:");
+        int op = Integer.valueOf(opSt);
+        if (op >= 0 && op <= 5) {
+            switch (op) {
+                case 0:
+                    LOG.info(String.format("Fin Sesión usuario %s", u.getName()));
+                    if (readLine("%s", "¿Iniciar nueva sesión? (s/n):").equalsIgnoreCase("s")) {
+                        userAccess();
+                    }
+                    return;
+                case 1:
+                    LOG.info(String.format("Usuario %s comprueba matrícula", u.getName()));
+                    checkSpanishPlate();
+                    break;
+                case 2:
+                    LOG.info(String.format("Usuario %s Ve fichero", u.getName()));
+                    readTxtFile();
+                    break;
+                case 3:
+                    LOG.info(String.format("Usuario %s Valida frase con expresión regular", u.getName()));
+                    checkRegExWithTxt();
+                    break;
+                case 4:
+                    LOG.info(String.format("Usuario %s Valida usuario Twiter", u.getName()));
+                    checkTwiterUser();
+                    break;
+                case 5:
+                    LOG.info(String.format("Usuario %s cambiar su contraseña", u.getName()));
+                    changePassword(u);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            if (readLine("%s", "Opción no válida (¿Reintentar? (s/n):").equalsIgnoreCase("s")) {
+                showAdminMenu(u);
+            }
+        }
+        if (readLine("%s", "¿Desea seguir ejecutando tareas? (s/n):").equalsIgnoreCase("s")) {
+            showAdminMenu(u);
+        } else {
+            LOG.info(String.format("Fin Sesión usuario %s", u.getName()));
+            if (readLine("%s", "¿Iniciar nueva sesión? (s/n):").equalsIgnoreCase("s")) {
+                userAccess();
+            }
+        }
     }
 
     /**
@@ -198,4 +249,67 @@ public class DataValidation {
         }
 
     }
+
+    private void checkSpanishPlate() {
+        String plate = readLine("Introduzca la matrícula:");
+        Pattern pat = Pattern.compile("[0-9]{8}-[a-zA-Z]");
+        Matcher mat = pat.matcher(plate);
+
+        if (mat.find()) {
+            System.out.println("Correcto!! " + plate);
+        } else {
+            System.out.println("El DNI esta mal " + plate);
+        }
+
+    }
+
+    private void readTxtFile() {
+        String plate = readLine("Introduzca la matrícula:");
+        Pattern pat = Pattern.compile("[0-9]{8}-[a-zA-Z]");
+        Matcher mat = pat.matcher(plate);
+
+        if (mat.find()) {
+            System.out.println("Correcto!! " + plate);
+        } else {
+            System.out.println("El DNI esta mal " + plate);
+        }
+    }
+
+    private void checkRegExWithTxt() {
+        String plate = readLine("Introduzca la matrícula:");
+        Pattern pat = Pattern.compile("[0-9]{8}-[a-zA-Z]");
+        Matcher mat = pat.matcher(plate);
+
+        if (mat.find()) {
+            System.out.println("Correcto!! " + plate);
+        } else {
+            System.out.println("El DNI esta mal " + plate);
+        }
+    }
+
+    private void checkTwiterUser() {
+        String plate = readLine("Introduzca la matrícula:");
+        Pattern pat = Pattern.compile("[0-9]{8}-[a-zA-Z]");
+        Matcher mat = pat.matcher(plate);
+
+        if (mat.find()) {
+            System.out.println("Correcto!! " + plate);
+        } else {
+            System.out.println("El DNI esta mal " + plate);
+        }
+    }
+
+    private void changePassword(User u) {
+        String pw = readLine("Introduzca su contraseña:");
+        
+        Pattern pat = Pattern.compile("[0-9]{8}-[a-zA-Z]");
+        Matcher mat = pat.matcher(pw);
+
+        if (mat.find()) {
+            System.out.println("Correcto!! " + pw);
+        } else {
+            System.out.println("El DNI esta mal " + pw);
+        }
+    }
+
 }
