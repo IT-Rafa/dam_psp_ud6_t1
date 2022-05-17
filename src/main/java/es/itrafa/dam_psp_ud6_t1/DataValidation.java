@@ -3,6 +3,10 @@ package es.itrafa.dam_psp_ud6_t1;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -250,66 +254,132 @@ public class DataValidation {
 
     }
 
+    /**
+     * Pide al usuario un texto y comprueba que coincida con uno de los tipos de
+     * matrículas españolas.
+     *
+     * https://itv.com.es/tipos-de-matriculas-espana
+     * https://www.autonocion.com/historia-y-tipos-de-matriculas-espana/
+     * https://matriculasdelmundo.com/matricula-espana-provincias.php
+     * https://matriculasdelmundo.com/espana.html
+     *
+     * <ul>
+     *
+     * <li>Ordinaria(1900):1-3 Letras(provincia), guion opcional, entre 1 y 6
+     * dígitos (doble numeración¿?)</li>
+     *
+     * <li>Ordinaria(1907):1-3 Letras(provincia), guion opcional, entre 1 y 6
+     * dígitos</li>
+     * <li>Ordinaria(1908):1-2 Letras(provincia), guion opcional, entre 1 y 6
+     * dígitos. Nuevas siglas</li>
+     * <li>Ordinaria(1926):1-2 Letras(provincia), guion opcional, entre 1 y 6
+     * dígitos. Nuevas siglas</li>
+     *
+     * <li>Ordinaria(1971):Letra(s) provincia, guion opcional, cuatro dígitos,
+     * guión opcional </li>
+     *
+     * <li>Ordinaria(2000): cuatro dígitos, guion opcional y tres letras
+     * consonantes, a excepción de la Ñ y Q.</li>
+     * <li></li>
+     * </ul>
+     */
     private void checkSpanishPlate() {
-        String plate = readLine("Introduzca la matrícula:");
-        Pattern pat = Pattern.compile("[0-9]{8}-[a-zA-Z]");
-        Matcher mat = pat.matcher(plate);
+        String plate = readLine("Introduzca matrícula:");
+        Pattern p_ord1907 = Pattern.compile("@[0-9a-zA-Z-_]");
 
+        Matcher mat = p_ord1907.matcher(plate);
+        // patron actual: ^[0-9]{1,4}(?!.*(LL|CH))[BCDFGHJKLMNPRSTVWXYZ]{3}
         if (mat.find()) {
-            System.out.println("Correcto!! " + plate);
+            System.out.printf("%s fue válida entre 1907 y 1926", plate);
         } else {
-            System.out.println("El DNI esta mal " + plate);
+            System.out.printf("%s no es un usuario de Twiter válido", plate);
         }
-
     }
 
+    /**
+     * Pide al usuario un texto y comprueba que coincida con el nombre coincida
+     * con el formato 8 caracteres + . + 3 caracteres. Si existe un archivo con
+     * el mismo nombre, lo muestra
+     *
+     */
     private void readTxtFile() {
-        String plate = readLine("Introduzca la matrícula:");
-        Pattern pat = Pattern.compile("[0-9]{8}-[a-zA-Z]");
-        Matcher mat = pat.matcher(plate);
+        String filePath = readLine("Introduzca la ruta del archivo(ruta actual=.):");
+        Pattern pat = Pattern.compile("[0-9a-zA-Z]{8}.[0-9a-zA-Z]{3}");
+        Matcher mat = pat.matcher(filePath);
 
         if (mat.find()) {
-            System.out.println("Correcto!! " + plate);
-        } else {
-            System.out.println("El DNI esta mal " + plate);
+            Path path = Paths.get(filePath);
+
+            if (path.toFile().isFile()) {
+                try (BufferedReader reader = Files.newBufferedReader(path, Charset.forName("UTF-8"))) {
+
+                    String currentLine;
+                    while ((currentLine = reader.readLine()) != null) {//while there is content on the current line
+                        System.out.println(currentLine); // print the current line
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace(); //handle an exception here
+                }
+            } else {
+
+                System.out.printf(path + "no existe");
+            }
         }
     }
 
+    /**
+     * Pide al usuario un texto y una expresión regular y comprueba si encajan.
+     *
+     */
     private void checkRegExWithTxt() {
-        String plate = readLine("Introduzca la matrícula:");
-        Pattern pat = Pattern.compile("[0-9]{8}-[a-zA-Z]");
-        Matcher mat = pat.matcher(plate);
+        String txt = readLine("Introduzca el texto a comprobar:");
+        String p = readLine("Introduzca la expresión regular:");
+
+        Pattern pat = Pattern.compile(p);
+        Matcher mat = pat.matcher(txt);
 
         if (mat.find()) {
-            System.out.println("Correcto!! " + plate);
+            System.out.printf("El texto %s coincide con el patrón %s%n", txt, p);
         } else {
-            System.out.println("El DNI esta mal " + plate);
+            System.out.printf("El texto %s no coincide con el patrón %s%n", txt, p);
         }
     }
 
+    /**
+     * Pide al usuario un texto y comprueba que coincida con el formato de un
+     * usuario de Twiter.
+     * <p>
+     * Usuario Twiter: empieza por @ y puede contener letras mayusculas y
+     * minusculas, numeros, guiones y guiones bajos</p>
+     */
     private void checkTwiterUser() {
-        String plate = readLine("Introduzca la matrícula:");
-        Pattern pat = Pattern.compile("[0-9]{8}-[a-zA-Z]");
-        Matcher mat = pat.matcher(plate);
+        String twiterUser = readLine("Introduzca el usuario de Twiter:");
+        Pattern pat = Pattern.compile("@[0-9a-zA-Z-_]");
+        Matcher mat = pat.matcher(twiterUser);
 
         if (mat.find()) {
-            System.out.println("Correcto!! " + plate);
+            System.out.printf("%s es un usuario de Twiter válido", twiterUser);
         } else {
-            System.out.println("El DNI esta mal " + plate);
+            System.out.printf("%s no es un usuario de Twiter válido", twiterUser);
         }
     }
 
-    private void changePassword(User u) {
-        String pw = readLine("Introduzca su contraseña:");
-        
-        Pattern pat = Pattern.compile("[0-9]{8}-[a-zA-Z]");
-        Matcher mat = pat.matcher(pw);
+    private void changePassword(User user) {
 
-        if (mat.find()) {
-            System.out.println("Correcto!! " + pw);
-        } else {
-            System.out.println("El DNI esta mal " + pw);
+        for (User u : userList) {
+            if (u.equals(user)) {
+                String pw = readLine("Introduzca la nueva contraseña:");
+                u.setPassword(pw);
+
+                System.out.println("Su contraseña ha cambiado");
+                LOG.info(String.format("Usuario %s cambió su contraseña", u.getName()));
+                return;
+            }
+
+            System.out.println("Error al cambiar la contraseña. Consulte administrador");
+            LOG.severe("Usuario %s, con acceso concedido no se localiza para cambiar contraseña");
         }
+
     }
 
 }
