@@ -1,6 +1,8 @@
 package es.itrafa.dam_psp_ud6_t1;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -8,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,11 +47,7 @@ public class DataValidation {
      */
     public DataValidation() {
         this.userList = new ArrayList<>();
-
-        LOG.info("Creando administrador ");
-
-        User admin = new User("admin", "NewMagager00", UserType.ADMIN); //o/0 son ceros
-        userList.add(admin);
+        readUsersFromFile();
     }
 
     /**
@@ -56,34 +55,80 @@ public class DataValidation {
      *
      */
     public void userAccess() {
+        boolean retry = false;
         LOG.info("Intento Acceso");
         System.out.println("ACCESO USUARIO:");
-        String name = readLine("introduce nombre:");
-        String password = readPassword("introduce contraseña:");
 
+        String name = readLine("introduce nombre:");
+        if (name.isEmpty() || name.isBlank()) {
+            System.out.println("No se introdujo usuario. Reintentar");
+            name = readLine("introduce nombre:");
+        }
+        String password = readPassword("introduce contraseña:");
         if (password != null) {
-            for (User u : userList) {
-                if (u.getName().equals(name)
-                        && u.getPassword().equals(password)) {
-                    LOG.info(String.format("Acceso concedido al usuario %s", u.getName()));
-                    if (u.getType() == UserType.ADMIN) {
-                        showAdminMenu(u);
-                    } else {
-                        showStandardMenu(u);
+            User u = checkUser(name, password);
+            if (u != null) {
+                LOG.info(String.format("Acceso concedido al usuario %s", u.getName()));
+                if (u.getType() == UserType.ADMIN) {
+                    String op = null;
+                    while (op == null) {
+                        op = readLine("%s", "¿Desea acceder como administrador? (s/n):");
+                        if (op.equalsIgnoreCase("s")) {
+                            showAdminMenu(u);
+
+                        } else if (op.equalsIgnoreCase("n")) {
+                            showStandardMenu(u);
+
+                        } else {
+                            System.out.println("Opción no válida. Reintentar");
+                            op = null;
+                        }
                     }
-                    return;
+
+                } else {
+                    showStandardMenu(u);
+                }
+            } else {
+                System.out.println("Acceso denegado: Usuario o contraseña no coincide");
+                LOG.info("Acceso denegado: Usuario o contraseña no coincide");
+
+            }
+        }
+
+        while (retry == false) {
+            String op = readLine("%s", "¿Desea volver a iniciar sesión? (s/n):");
+            if (op.equalsIgnoreCase("s")) {
+                userAccess();
+                retry = true;
+
+            } else if (op.equalsIgnoreCase("n")) {
+                return;
+            } else {
+                System.out.println("Opción no válida. Reintentar");
+            }
+        }
+    }
+
+    private void showMenu(User u, boolean adminMode) {
+        boolean endSession = false;
+        while (!endSession) {
+            if (adminMode) {
+                if (showAdminMenu(u)) {
+                    if (readLine("%s", "¿Desea seguir ejecutando tareas? (s/n):").equalsIgnoreCase("s")) {
+                        endSession = showAdminMenu(u);
+                    }
+                }
+            } else {
+                if (showStandardMenu(u)) {
+                    if (readLine("%s", "¿Desea seguir ejecutando tareas? (s/n):").equalsIgnoreCase("s")) {
+                        endSession = showStandardMenu(u);
+                    }
                 }
             }
-            System.out.println("Acceso denegado: Usuario o contraseña no coincide");
-            LOG.info("Acceso denegado: Usuario o contraseña no coincide");
-        }
-        //password == null -> probably, no console(IDE mode)
-        //and user don´t want write password in visible mode
 
-        if (readLine("%s", "¿Reintentar?(s/n)").equalsIgnoreCase("s")) {
-            userAccess();
-        }
+            LOG.info(String.format("Fin Sesión usuario %s", u.getName()));
 
+        }
     }
 
     /**
@@ -91,13 +136,13 @@ public class DataValidation {
      *
      * @param u Usuario estándar
      */
-    private void showAdminMenu(User u) {
+    private boolean showAdminMenu(User u) {
         System.out.println("MENU ADMIN");
         System.out.println("----------");
         System.out.println(" 1. Añadir Usuario");
         System.out.println(" 2. Cambiar Contraseña Usuario");
         System.out.println(" 3. Eliminar Usuario");
-        System.out.println(" 0. SALIR");
+        System.out.println(" 0. Fin sesión");
 
         String opSt = readLine("%n%s", "Introduce opción válida:");
         int op = Integer.valueOf(opSt);
@@ -105,12 +150,11 @@ public class DataValidation {
             switch (op) {
                 case 0:
                     LOG.info(String.format("Fin Sesión usuario %s", u.getName()));
-                    if (readLine("%s", "¿Iniciar nueva sesión? (s/n):").equalsIgnoreCase("s")) {
-                        userAccess();
-                    }
-                    return;
+                    return true;
+
                 case 1:
                     LOG.info(String.format("Usuario %s añade usuario", u.getName()));
+                    createUser(u);
                     break;
                 case 2:
                     LOG.info(String.format("Usuario %s cambia contraseña a usuario", u.getName()));
@@ -127,14 +171,7 @@ public class DataValidation {
                 showAdminMenu(u);
             }
         }
-        if (readLine("%s", "¿Desea seguir ejecutando tareas? (s/n):").equalsIgnoreCase("s")) {
-            showAdminMenu(u);
-        } else {
-            LOG.info(String.format("Fin Sesión usuario %s", u.getName()));
-            if (readLine("%s", "¿Iniciar nueva sesión? (s/n):").equalsIgnoreCase("s")) {
-                userAccess();
-            }
-        }
+        return false;
 
     }
 
@@ -143,15 +180,15 @@ public class DataValidation {
      *
      * @param u Usuario estándar
      */
-    private void showStandardMenu(User u) {
-        System.out.print("MENU USUARIO");
-        System.out.print("----------");
-        System.out.print(" 1. Comprobar matrícula");
-        System.out.print(" 2. Mostrar contenido fichero");
-        System.out.print(" 3. Validar frase con expresión regular");
-        System.out.print(" 4. Validar usuario Twiter");
-        System.out.print(" 5. Cambiar tu contraseña");
-        System.out.print(" 0. SALIR");
+    private boolean showStandardMenu(User u) {
+        System.out.println("MENU USUARIO");
+        System.out.println("----------");
+        System.out.println(" 1. Comprobar matrícula");
+        System.out.println(" 2. Mostrar contenido fichero");
+        System.out.println(" 3. Validar frase con expresión regular");
+        System.out.println(" 4. Validar usuario Twiter");
+        System.out.println(" 5. Cambiar tu contraseña");
+        System.out.println(" 0. Fin sesión");
 
         String opSt = readLine("%n%s", "Introduce opción válida:");
         int op = Integer.valueOf(opSt);
@@ -159,10 +196,7 @@ public class DataValidation {
             switch (op) {
                 case 0:
                     LOG.info(String.format("Fin Sesión usuario %s", u.getName()));
-                    if (readLine("%s", "¿Iniciar nueva sesión? (s/n):").equalsIgnoreCase("s")) {
-                        userAccess();
-                    }
-                    return;
+                    return true;
                 case 1:
                     LOG.info(String.format("Usuario %s comprueba matrícula", u.getName()));
                     checkSpanishPlate();
@@ -191,66 +225,7 @@ public class DataValidation {
                 showAdminMenu(u);
             }
         }
-        if (readLine("%s", "¿Desea seguir ejecutando tareas? (s/n):").equalsIgnoreCase("s")) {
-            showAdminMenu(u);
-        } else {
-            LOG.info(String.format("Fin Sesión usuario %s", u.getName()));
-            if (readLine("%s", "¿Iniciar nueva sesión? (s/n):").equalsIgnoreCase("s")) {
-                userAccess();
-            }
-        }
-    }
-
-    /**
-     * Controla la peticiones normales hechas al usuario por consola.
-     *
-     * @param format String con formato donde se indica que se pide
-     * @param args Lista argumentos usados en format
-     * @return Respuesta del usuario
-     */
-    private String readLine(String format, Object... args) {
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(System.in));
-        try {
-            System.out.format(format, args);
-            System.out.println();
-            return reader.readLine();
-
-        } catch (IOException ex) {
-            LOG.severe("Error entrada/salida");
-        }
-        return null;
-    }
-
-    /**
-     * Controla la peticiones de contraseña hechas al usuario por consola. Si se
-     * tiene consola asignada (Por IDE no se suele asignar) no muestra la
-     * respuesta del usuario por pantalla (eco). Si no, Muestra aviso de que se
-     * verá la contraseña y permite cancelar la petición
-     *
-     * @param format String con formato donde se indica que se pide
-     * @param args Lista argumentos usados en format
-     * @return Respuesta del usuario o null si no se quiere introducir la
-     * contraseña de forma visible
-     */
-    private String readPassword(String format, Object... args) {
-        if (System.console() != null) {
-            char[] ps = System.console().readPassword(format, args);
-            return String.valueOf(ps);
-        }
-        System.out.format("%s%n%s",
-                "No existe acceso a la consola. Probablemente se esté usando un IDE.",
-                "Al introducir la contraseña será visible. ¿Desea seguir (s/n)?");
-
-        if (readLine("%s", "")
-                .equalsIgnoreCase("s")) {
-            return this.readLine(format, args);
-
-        } else {
-            LOG.info("Acceso cancelado por visibilidad contraseña");
-            System.out.println("Acceso cancelado.");
-            return null;
-        }
+        return false;
 
     }
 
@@ -382,4 +357,99 @@ public class DataValidation {
 
     }
 
+    private void createUser(User admin) {
+
+    }
+
+    private User checkUser(String name, String password) {
+        for (User u : userList) {
+            if (u.getName().equals(name)
+                    && u.getPassword().equals(password)) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Controla la peticiones normales hechas al usuario por consola.
+     *
+     * @param format String con formato donde se indica que se pide
+     * @param args Lista argumentos usados en format
+     * @return Respuesta del usuario
+     */
+    private String readLine(String format, Object... args) {
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(System.in));
+        try {
+            System.out.format(format, args);
+            System.out.println();
+            return reader.readLine();
+
+        } catch (IOException ex) {
+            LOG.severe("Error entrada/salida");
+        }
+        return null;
+    }
+
+    /**
+     * Controla la peticiones de contraseña hechas al usuario por consola. Si se
+     * tiene consola asignada (Por IDE no se suele asignar) no muestra la
+     * respuesta del usuario por pantalla (eco). Si no, Muestra aviso de que se
+     * verá la contraseña y permite cancelar la petición
+     *
+     * @param format String con formato donde se indica que se pide
+     * @param args Lista argumentos usados en format
+     * @return Respuesta del usuario o null si no se quiere introducir la
+     * contraseña de forma visible
+     */
+    private String readPassword(String format, Object... args) {
+        if (System.console() != null) {
+            char[] ps = System.console().readPassword(format, args);
+            return String.valueOf(ps);
+        }
+        System.out.format("%s%n%s",
+                "No existe acceso a la consola. Probablemente se esté usando un IDE.",
+                "Al introducir la contraseña será visible. ");
+
+        while (true) {
+            String op = readLine("%s", "¿Continuar? (s/n):");
+            if (op.equalsIgnoreCase("s")) {
+                return this.readLine(format, args);
+
+            } else if (op.equalsIgnoreCase("n")) {
+                LOG.info("Acceso cancelado por visibilidad contraseña");
+                System.out.println("Acceso cancelado.");
+                return null;
+            } else {
+                System.out.println("Opción no válida. s para pedir contraseña. n para cancelar");
+            }
+        }
+
+    }
+
+    private void readUsersFromFile() {
+        try {
+            String fileName = "USERS.txt";
+            Path filePath = Paths.get(fileName);
+            if (!Files.exists(filePath)) {
+                LOG.warning(String.format(
+                        "Archivo de usuarios no existe. Creamos archivo %s, args)",
+                        fileName));
+                Files.createFile(filePath);
+
+            }
+
+            if (!Files.isRegularFile(filePath) && !Files.isReadable(filePath)) {
+                // File is not a readable file
+            }
+
+            BufferedReader br = new BufferedReader(new FileReader("path_to_some_file"));
+            if (br.readLine() == null) {
+                System.out.println("No errors, and file empty");
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(DataValidation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
